@@ -1,0 +1,14 @@
+---
+const {id, name, label, border, type} = Astro.props
+---
+
+<label for={name} class="flex flex-col gap-4">
+    <span class="text-xl font-semibold">{label}</span>
+    <input class="w-96 px-4 py-4 rounded-md border-2 focus:outline-none bg-black"
+        style={`border-color: ${border};`}
+        id={id} 
+        name={name} 
+        type={type ? type :"text"} 
+        placeholder="..."
+    >
+</label>
