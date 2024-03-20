@@ -1,0 +1,104 @@
+---
+import Layout from '../layouts/Layout.astro'
+import Input from '../components/Input.astro'
+import InputSubmit from '../components/InputSubmit.astro'
+import Alert from '../components/Alert.astro'
+import { db, Pages, eq, PageLinks } from 'astro:db'
+import { v4 as uuidv4 } from 'uuid';
+
+var alert_msg:string
+
+if(!Astro.cookies.has("username")){
+    return Astro.redirect("/")
+}
+
+const username = Astro.cookies.get("username").value
+const page = await db.select().from(Pages).where(eq(Pages.username, username))
+
+if (page.length == 0){
+    Astro.cookies.delete("username")
+    return Astro.redirect("/")
+}
+
+if(Astro.request.method === "POST"){
+    const formData = await Astro.request.formData()
+	const id = uuidv4()
+    const page_id = page[0].id
+	const label = formData.get("label")
+	const icon = formData.get("icon")
+    const link = formData.get("link")
+
+    if ( 
+        typeof label == "string" && 
+        typeof icon == "string" && 
+        typeof link == "string") {
+        
+        try{
+            await db.insert(PageLinks).values({
+                id,
+                label,
+                icon,
+                link,
+                page_id
+            })
+            return Astro.redirect("/links")
+        }catch (e) {
+            alert_msg = "There was an error, try again later"
+        }   
+    }
+}
+---
+
+<Layout title="Creati Web" header="Add a link 🎅">
+<main class="flex items-center justify-center flex-col">
+    <Alert id="alert" msg={alert_msg}/>
+    <form method="POST" class="space-y-6">
+        <Input
+        id="label" 
+        name="label" 
+        label="Label 👩‍💼"
+        border="#FF00AA"
+        />
+        <Input
+        id="icon" 
+        name="icon" 
+        label="Icon 👨‍🌾"
+        border="#AA00FF"
+        />
+        <Input
+        id="link" 
+        name="link" 
+        label="Link  ‍🖐"
+        border="#00AAFF"
+        />
+        <div class="flex justify-end">
+            <InputSubmit
+				value="Create Link  👨‍🦲"	
+				id="button-submit"
+			/>
+        </div>
+    </form>
+</main>
+<script>
+    const label = document.querySelector("#label") as HTMLInputElement
+    const icon = document.querySelector("#icon") as HTMLInputElement
+    const link = document.querySelector("#link") as HTMLInputElement
+    const domAlert = document.querySelector("#alert") as HTMLDivElement
+
+    document.querySelector("#button-submit").addEventListener("click", (e)=>{
+        if(
+            label.value == "" ||
+            icon.value == "" ||
+            link.value == "" 
+        ){
+            e.preventDefault()
+            domAlert.classList.remove("hidden")
+			domAlert.innerHTML = "Fill in all the fields 🤣"
+			setTimeout(()=>{
+				domAlert.classList.add("hidden")
+			}, 1500)
+        }
+    })
+
+</script>
+</Layout>

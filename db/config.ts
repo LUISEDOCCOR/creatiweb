@@ -1,4 +1,4 @@
-import { defineDb, defineTable, column, TRUE } from 'astro:db';
+import { defineDb, defineTable, column} from 'astro:db';
 
 const Pages = defineTable({
   columns:{
@@ -8,10 +8,20 @@ const Pages = defineTable({
   }
 })
 
+const PageLinks =  defineTable({
+  columns:{
+    id: column.text({primaryKey: true, unique: true}),
+    label: column.text(),
+    icon: column.text(),
+    link: column.text(),
+    page_id: column.text({references: ()=> Pages.columns.id})
+  }
+})
 
 // https://astro.build/db/config
 export default defineDb({
   tables: {
-    Pages
+    Pages,
+    PageLinks
   }
 });

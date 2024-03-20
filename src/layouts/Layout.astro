@@ -1,6 +1,7 @@
 ---
 import Nav from "../components/Nav.astro"
-	import '@fontsource-variable/inter';
+import '@fontsource-variable/inter';
+import { ViewTransitions } from "astro:transitions";
 const { title, header } = Astro.props;
 ---
 
@@ -13,6 +14,7 @@ const { title, header } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ViewTransitions/>
 	</head>
 	<body class="min-h-screen bg-[#161616]">
 		<header>

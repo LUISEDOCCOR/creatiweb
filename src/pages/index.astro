@@ -5,8 +5,13 @@ import InputSubmit from '../components/InputSubmit.astro'
 import Alert from '../components/Alert.astro'
 import { v4 as uuidv4 } from 'uuid';
 import { db, Pages } from 'astro:db';
+var alert_msg: string
 
-if(Astro.request.method == "POST"){
+if(Astro.cookies.has("username")){
+	return Astro.redirect("/links")
+}
+
+if(Astro.request.method === "POST"){
 	const formData = await Astro.request.formData()
 	const id = uuidv4()
 	const username = formData.get("username")
@@ -15,20 +20,27 @@ if(Astro.request.method == "POST"){
 		typeof username == "string" &&
 		typeof password == "string"
 	){
-		await db.insert(Pages).values({
-			id,
-			username,
-			password
-		})
-		return Astro.redirect("/pepe")
+		try{
+			await db.insert(Pages).values({
+				id,
+				username,
+				password
+			})
+			Astro.cookies.set("username", username )
+			return Astro.redirect("/links")
+		}catch (e) {
+			if (e.rawCode == 2067){
+				alert_msg = "The username already exists"
+			}
+		}
 	}
 }
 ---
 
-<Layout title="Welcome to Astro." header="Create your page 🤩">
+<Layout title="Creati Web" header="Create your page 🤩">
 	<main class="flex flex-col items-center">
-		<Alert id="alert"/>
-		<form method="POST"class="space-y-6">
+		<Alert id="alert" msg={alert_msg}/>
+		<form method="POST" class="space-y-6">
 			<Input 
 				id="username" 
 				name="username" 
