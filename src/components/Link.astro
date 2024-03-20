@@ -1,0 +1,16 @@
+---
+const {label, icon, id, link} = Astro.props
+import { RandomColor } from '../utilities/randomColor'
+const border = RandomColor()
+---
+
+<a
+    id={id}
+    href={link}
+    class="w-96 text-xl font-semibold bg-black py-4 px-4 rounded-md border-2 space-y-2 
+    hover:scale-105 transition-transform cursor-pointer" 
+    style={`border-color: ${border};`}    
+    target="_blank"
+>
+    {label} {icon}
+</a>

@@ -1,44 +1,34 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import SvgNotLinks from '../components/SvgNotLinks.astro'
-import ButtonAddLink from '../components/ButtonAddLink.astro'
-import LinkPreview from '../components/LinkPreview.astro'
+import Layout from '../../layouts/Layout.astro'
+const { username } = Astro.params
+import Link from '../../components/Link.astro'
+import SvgNotLinks from '../../components/SvgNotLinks.astro'
 import { db, Pages, eq, PageLinks } from 'astro:db'
 
-if(!Astro.cookies.has("username")){
-    return Astro.redirect("/")
-}
-
-const username = Astro.cookies.get("username").value
 const page = await db.select().from(Pages).where(eq(Pages.username, username))
 
 if (page.length == 0){
-    Astro.cookies.delete("username")
     return Astro.redirect("/")
 }
 
 const pageLinks = await db.select()
 .from(PageLinks)
 .innerJoin(Pages, eq(PageLinks.page_id, page[0].id))
-console.log(pageLinks)
-
 ---
 
-<Layout title="Creati Web" header="These are the links to your page 👌">
-<main class="flex justify-center items-center flex-col">
-    <section class="mb-8">
-        <a href={`/page/${username}`}>Your Page</a>
-    </section>
+
+<Layout title={username} header={username}>
+<main class="flex justify-center">
     {
         pageLinks.length == 0 ? (
             <section class="flex flex-col items-center gap-24">
                 <SvgNotLinks styles="w-[20vw] hover:scale-110 transition-transform"/>
             </section>
         ): (
-            <section class="space-y-6" >
+            <section class="flex flex-col gap-6" >
                 {
                     pageLinks.map(({ PageLinks : link}) => (
-                        <LinkPreview 
+                        <Link
                         label={link.label} 
                         icon={link.icon} 
                         link={link.link} 
@@ -48,8 +38,5 @@ console.log(pageLinks)
             </section>
         )
     } 
-    <section class="mx-auto mt-12">
-        <ButtonAddLink href="/add"/>
-    </section>
 </main>
 </Layout>

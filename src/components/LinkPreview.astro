@@ -4,12 +4,14 @@ import { RandomColor } from '../utilities/randomColor'
 const border = RandomColor()
 ---
 
-<article
-    class="w-96 bg-black py-4 px-4 rounded-md border-2 space-y-2 hover:scale-105 transition-transform" 
+<section
+    id={id}
+    class="w-96 bg-black py-4 px-4 rounded-md border-2 space-y-2 
+    hover:scale-105 transition-transform cursor-pointer" 
     style={`border-color: ${border};`}    
 >
     <h2 class="text-xl font-semibold">{label} {icon}</h2>
     <p class="w-80 overflow-hidden text-nowrap">
         {link.length > 35 ? link.slice(0, 35) + "..." : link}
     </p>
-</article>
+</section>
