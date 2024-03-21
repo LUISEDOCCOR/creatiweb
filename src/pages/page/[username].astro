@@ -11,9 +11,9 @@ if (page.length == 0){
     return Astro.redirect("/")
 }
 
-const pageLinks = await db.select()
-.from(PageLinks)
-.innerJoin(Pages, eq(PageLinks.page_id, page[0].id))
+const pageLinks = await db.select().
+from(PageLinks).
+where(eq(PageLinks.page_id, page[0].id))
 ---
 
 
@@ -27,7 +27,7 @@ const pageLinks = await db.select()
         ): (
             <section class="flex flex-col gap-6" >
                 {
-                    pageLinks.map(({ PageLinks : link}) => (
+                    pageLinks.map((link) => (
                         <Link
                         label={link.label} 
                         icon={link.icon} 

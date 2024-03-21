@@ -17,27 +17,25 @@ if (page.length == 0){
     return Astro.redirect("/")
 }
 
-const pageLinks = await db.select()
-.from(PageLinks)
-.innerJoin(Pages, eq(PageLinks.page_id, page[0].id))
-console.log(pageLinks)
-
+const pageLinks = await db.select().
+from(PageLinks).
+where(eq(PageLinks.page_id, page[0].id))
 ---
 
 <Layout title="Creati Web" header="These are the links to your page 👌">
 <main class="flex justify-center items-center flex-col">
-    <section class="mb-8">
-        <a href={`/page/${username}`}>Your Page</a>
-    </section>
     {
         pageLinks.length == 0 ? (
             <section class="flex flex-col items-center gap-24">
                 <SvgNotLinks styles="w-[20vw] hover:scale-110 transition-transform"/>
             </section>
         ): (
+            <section class="mb-8">
+                <a target="_blank" href={`/page/${username}`}>Your Page</a>
+            </section>
             <section class="space-y-6" >
                 {
-                    pageLinks.map(({ PageLinks : link}) => (
+                    pageLinks.map((link) => (
                         <LinkPreview 
                         label={link.label} 
                         icon={link.icon} 
