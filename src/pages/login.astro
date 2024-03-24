@@ -1,0 +1,80 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { db, Pages, eq } from "astro:db";
+import Input from "../components/Input.astro";
+import InputSubmit from "../components/InputSubmit.astro";
+import Alert from "../components/Alert.astro";
+
+
+var alert_msg: string
+
+if(Astro.cookies.has("username")){
+	return Astro.redirect("/links")
+}
+
+if(Astro.request.method === "POST"){
+	const formData = await Astro.request.formData()
+	const username = formData.get("username")
+	const password = formData.get("password")
+	if(
+		typeof username == "string" &&
+		typeof password == "string"
+	){
+		try{
+			const user = await db.select().from(Pages).where(eq(Pages.username, username))
+            if(user.length == 0){
+                return Astro.redirect("/")
+            }
+            if(user[0].password == password && user[0].username == username){
+                Astro.cookies.set("username", username )
+			    return Astro.redirect("/links")
+            }else{
+              alert_msg = "The credentials are incorrect "  
+            }
+		}catch (e) {
+			alert_msg = "Server Error"
+	    }   
+    }
+}
+
+--- 
+
+
+<Layout  title="Creati Web" header="Recover your page 🤤">
+    <main class="flex flex-col items-center">
+        <Alert id="alert" msg={alert_msg}/>
+        <form method="POST" class="space-y-6">
+            <Input 
+				id="username" 
+				name="username" 
+				label="Username 🎉"
+				border="#FF00AA"
+			/>
+			<Input 
+				id="password" 
+				name="password" 
+				label="Password 🤷"
+				border="#AA00FF"
+				type="password"
+			/>
+            <div class="w-96 flex justify-end">
+                <InputSubmit value="Login 🫨"/>
+            </div>
+        </form>
+    </main>
+</Layout>
+<script>
+	const username = document.querySelector("#username") as HTMLInputElement
+	const password = document.querySelector("#password") as HTMLInputElement
+	const domAlert = document.querySelector("#alert") as HTMLDivElement
+	document.querySelector("#button-submit").addEventListener("click", (e)=>{
+		if(username.value == "" || password.value == ""){
+			e.preventDefault()
+			domAlert.classList.remove("hidden")
+			domAlert.innerHTML = "Fill in all the fields 🤣"
+			setTimeout(()=>{
+				domAlert.classList.add("hidden")
+			}, 1500)
+		}
+	})
+</script>

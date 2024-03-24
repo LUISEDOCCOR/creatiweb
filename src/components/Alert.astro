@@ -4,4 +4,10 @@ const { id, msg } = Astro.props
 
 
 <div id={id} class={`w-96 text-center border-[#F62913] border-2 rounded-md py-2 
-    text-xl font-semibold mb-12 ${msg ? "" : "hidden"}`}>{msg}</div>
+    text-xl font-semibold ${msg == "The username already exists" ? "mb-4" : "mb-12"} ${msg ? "" : "hidden"}`}>{msg}
+</div>
+{
+    msg == "The username already exists"  ? (
+        <a href="/login" class="mb-12">Recover your page</a>
+    ): ""
+}

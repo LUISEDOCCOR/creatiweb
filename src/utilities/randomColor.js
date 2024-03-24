@@ -1,7 +1,7 @@
 const colors = [
     "#00AAFF",
     "#AA00FF",
-    "00AAFF"
+    "#00AAFF"
 ]
 
 const RandomNumber = (max) => {
